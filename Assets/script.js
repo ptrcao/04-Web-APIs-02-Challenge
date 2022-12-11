@@ -21,7 +21,7 @@ function sortTable(table) {
         x = rows[i].getElementsByTagName("TD")[1];
         y = rows[i + 1].getElementsByTagName("TD")[1];
         //check if the two rows should switch place:
-        if (Number(x.innerHTML) > Number(y.innerHTML)) {
+        if (Number(x.innerHTML) < Number(y.innerHTML)) {
           //if so, mark as a switch and break the loop:
           shouldSwitch = true;
           break;
@@ -230,7 +230,9 @@ console.log(endBox);
 console.log(hsBox);
 console.log(resultBox);
 
-
+document.getElementById("view-scores").addEventListener("click",function(){
+    showHighScores();
+})
 
 // Event delegation: a way that you can ad an event listener once for multiple elements with support for adding extra children
 // https://www.youtube.com/watch?v=pKzf80F3O0U&ab_channel=dcode
@@ -263,20 +265,15 @@ function click_fn(event) {
       mc_question_array[index].options[mc_question_array[index].correctAnsIndex]
     ) {
       console.log("Correct!");
-      result = "<li>" + questionLabel + ": Correct!</li>";
+      result = "<li>(Prev) " + questionLabel + ": Correct!</li>";
 
       $("#result").html(result);
 
-    //   if (numQues) {
-    
-    //     showQuestion(index + 1);
-    //   } else {
-    //     stopQuiz();
-    //   }
+
     } else {
       console.log("Incorrect!");
       result =
-        "<li>" +
+        "<li>(Prev) " +
         questionLabel +
         ': Wrong! <span style="color:red;font-style:italic;">-10 secs<span></li>';
       $("#result").html(result);
@@ -286,17 +283,10 @@ function click_fn(event) {
       // Subtraction assignment (-=)
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Subtraction_assignment
 
-    //   if (numQues) {
-    
-    //     showQuestion(index + 1);
-    //   } else {
-    //     stopQuiz();
-    //   }
     }
 
     // Now that the answer-checking has been done, advance to the next question
     index++;
- 
 
     if (numQues) {
         showQuestion(index);
@@ -309,7 +299,7 @@ function click_fn(event) {
 
 
 function startQuiz() {
-  secondsLeft = 75;
+  secondsLeft = 120;
   // var secondsLeft = 10000;
   // wrong, is creating a new variable named secondsLeft which is only accessible inside this StartQuiz function
   // the showQuestion function was pulling the global variable named SecondsLeft which = 0
@@ -321,13 +311,15 @@ function startQuiz() {
   startBox.style.setProperty("display", "none");
   quizBox.style.setProperty("display", "block");
   hsBox.style.setProperty("display", "none");
+  resultBox.style.setProperty("display", "block");
 
   timerInterval = setInterval(function () {
     secondsLeft--;
     timer.textContent = "Time remaining: " + secondsLeft;
 
-    if (secondsLeft === 0) {
+    if (secondsLeft <= 0) {
       // Stops execution of action at set interval
+    //<= rather than == is important because negative timer is possible when user gets penalised -10s below a remaining time of 10s
       clearInterval(timerInterval);
       // Calls function to create and append image
       stopQuiz();
@@ -392,14 +384,20 @@ function stopQuiz() {
 
 
 function showHighScores() {
+    // For View high scores transition
+    clearInterval(timerInterval);
+    secondsLeft = 0;
+    timer.textContent = "Time remaining: " + secondsLeft;
+    startBox.style.setProperty("display", "none");
+    quizBox.style.setProperty("display", "none");
+    document.getElementById("view-scores").style.setProperty("display", "none");
 
+    // for stopQuiz transition
   endBox.style.setProperty("display", "none");
   hsBox.style.setProperty("display", "block");
   resultBox.style.setProperty("display", "none");
 
-//   const hsTable = document.getElementsByTagName("tbody")[0]
-//   const hsTable = document.querySelector("table");
-//   console.log(hsTable);
+
 
   var table = document.getElementsByTagName("table")[0]
   console.log(table);
@@ -441,16 +439,8 @@ sortTable(table);
   $("#result").html("");
 }
 
-// BUGS
-// Timer display multiple events acting on it when a new game is started
-// secondsLeft in storage is -140
+
 
 // Stop a setInterval() from within another function
 // Store a reference to the interval and clear it using clearInterval()
 // https://stackoverflow.com/a/22316108/9095603
-
-// the second iteration is broken, if the player plays again, it only shows one question before ending the quiz
-
-// Score isn't being deducted
-
-// Trim doesn't work when the variable is originally got?

@@ -99,6 +99,11 @@ input[type="radio"] {
     background: transparent;
 }
 
+.container {
+    margin-top:0px;
+    margin-bottom:0px !important;
+}
+
 ul#result{
     list-style-type:none;
 }
@@ -114,4 +119,21 @@ nav ul li{
 
 #timer{
     text-align:right;
+}
+
+table td{
+    padding:4px;
+}
+
+#view-scores::before{
+    content: ">> ";
+    color: blue;
+}
+
+#view-scores:hover{
+    cursor: pointer;
+}
+
+tr:first-of-type{
+    font-weight: bold;
 }
