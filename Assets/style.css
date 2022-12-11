@@ -125,8 +125,7 @@ table td{
     padding:4px;
 }
 
-#view-scores::before{
-    content: ">> ";
+#view-scores{
     color: blue;
 }
 

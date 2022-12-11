@@ -2,40 +2,39 @@
 // sorting function to sort high scores table by ascending order of score in the second col
 // Adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number
 function sortTable(table) {
-    var rows, switching, i, x, y, shouldSwitch;
+  var rows, switching, i, x, y, shouldSwitch;
 
-    switching = true;
-    /*Make a loop that will continue until
+  switching = true;
+  /*Make a loop that will continue until
     no switching has been done:*/
-    while (switching) {
-      //start by saying: no switching is done:
-      switching = false;
-      rows = table.rows;
-      /*Loop through all table rows (except the
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
       first, which contains table headers):*/
-      for (i = 1; i < (rows.length - 1); i++) {
-        //start by saying there should be no switching:
-        shouldSwitch = false;
-        /*Get the two elements you want to compare,
+    for (i = 1; i < rows.length - 1; i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
         one from current row and one from the next:*/
-        x = rows[i].getElementsByTagName("TD")[1];
-        y = rows[i + 1].getElementsByTagName("TD")[1];
-        //check if the two rows should switch place:
-        if (Number(x.innerHTML) < Number(y.innerHTML)) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-      if (shouldSwitch) {
-        /*If a switch has been marked, make the switch
-        and mark that a switch has been done:*/
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
+      x = rows[i].getElementsByTagName("TD")[1];
+      y = rows[i + 1].getElementsByTagName("TD")[1];
+      //check if the two rows should switch place:
+      if (Number(x.innerHTML) < Number(y.innerHTML)) {
+        //if so, mark as a switch and break the loop:
+        shouldSwitch = true;
+        break;
       }
     }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
   }
-
+}
 
 // A string of objects is the best approach
 mc_question_array = [
@@ -103,13 +102,11 @@ var timerInterval;
 var secondsLeft = 0;
 var index = 0;
 
-
 console.log("Index: ", index);
 var questionNumber = index + 1;
 
 var questionLabel = "Q" + questionNumber;
-console.log(questionLabel)
-
+console.log(questionLabel);
 
 var timer = document.getElementById("timer");
 
@@ -135,41 +132,27 @@ var questions_parent_container = $("#qs_parent_container");
 // document.getElementById("age")
 // This function call takes time to write and is pretty verbose. Thus, a common convention is to replace the document.getElementById() function with $().
 
-
-
 // EVENT LISTENERS
 
 // Attach event listener to increment button element
 submitBtn.on("click", function (event) {
-    event.preventDefault();
-    // without event.preventDefault(); the entire app will be reloaded on form/input submission
+  event.preventDefault();
+  // without event.preventDefault(); the entire app will be reloaded on form/input submission
   // Don't mix JQuery and Javascript:
   // TypeError: $(...).addEventListener is not a function
   // https://stackoverflow.com/a/34767762/9095603
-
 
   // INPUTS
   var playerInput = $("#player-initials").val(); // Does this require var?
   console.log("playerInput: " + playerInput);
 
-    if (playerInput == null || playerInput == ''){
-    alert('Invalid input.  You must enter your initials.  Please try again.')
-    }
-    else{
-        appendToStorage(playerInput);
+  if (playerInput == null || playerInput == "") {
+    alert("Invalid input.  You must enter your initials.  Please try again.");
+  } else {
+    appendToStorage(playerInput);
 
-        // var enteredInitials = playerInput.val();
-        // console.log(enteredInitials)
-
-        // // Javascript Add to Object: Insert Key/Value in JavaScript Object
-        // // https://askjavascript.com/javascript-add-to-object/
-        // player_scoreboard_info.playerInitials = enteredInitials.trim()
-        // player_scoreboard_info.playerScore = secondsLeft
-
-        // localStorage.setItem("player_scoreboard_info", JSON.stringify(player_scoreboard_info));
-
-        showHighScores();
-    }
+    showHighScores();
+  }
 });
 
 var userScoreList = [];
@@ -190,32 +173,28 @@ function appendToStorage(playerName) {
 
 startBtn.addEventListener("click", startQuiz);
 
+playAgainBtn.addEventListener("click", function (event) {
+  event.preventDefault(); // for debugging and troubleshooting, this is helpful as it doesn't cause the page and console to reload and you can retain your console data up to this point, even though reloading the page at this point happens to coincide with what you want
 
+  // Clear high scores table for next run it doesn't duplicate rows over the last run (it will be rebuilt from scratch again)
+  //    var existingTable = document.getElementsByTagName("table")[0];
+  //    existingTable.append("table")
 
-playAgainBtn.addEventListener("click", function(event){
-    event.preventDefault(); // for debugging and troubleshooting, this is helpful as it doesn't cause the page and console to reload and you can retain your console data up to this point, even though reloading the page at this point happens to coincide with what you want
+  //     document.getElementsByTagName("table")[0].remove();
+  // https://www.geeksforgeeks.org/how-to-remove-all-rows-from-a-table-in-javascript/#:~:text=This%20can%20be%20done%20by%20using%20JavaScript.&text=First%20of%20all%20set%20the,delete%20the%20all%20table%20rows.
+  // this approach may not work because the whole ??? table element gets removed, and you want to keep the table element whilst removing the rows
 
-   // Clear high scores table for next run it doesn't duplicate rows over the last run (it will be rebuilt from scratch again)
-    //    var existingTable = document.getElementsByTagName("table")[0];
-    //    existingTable.append("table")
+  // console.log(document.getElementsByTagName("table"));
+  document.getElementsByTagName("table")[0].innerHTML = "";
+  // https://stackoverflow.com/a/41413953/9095603
 
-    //     document.getElementsByTagName("table")[0].remove();
-    // https://www.geeksforgeeks.org/how-to-remove-all-rows-from-a-table-in-javascript/#:~:text=This%20can%20be%20done%20by%20using%20JavaScript.&text=First%20of%20all%20set%20the,delete%20the%20all%20table%20rows.
-    // this approach may not work because the whole ??? table element gets removed, and you want to keep the table element whilst removing the rows
-    
-    // console.log(document.getElementsByTagName("table"));
-    document.getElementsByTagName("table")[0].innerHTML = "";
-    // https://stackoverflow.com/a/41413953/9095603
-
-    // table = document.getElementsByTagName("table");
-    // while(table.rows.length > 0) {
-    //     table.deleteRow(0);
-    //   }
-    // https://stackoverflow.com/a/16258678/9095603
-
+  // table = document.getElementsByTagName("table");
+  // while(table.rows.length > 0) {
+  //     table.deleteRow(0);
+  //   }
+  // https://stackoverflow.com/a/16258678/9095603
 
   startQuiz();
-
 });
 
 // playAgainBtn.addEventListener("click", () => {
@@ -230,20 +209,20 @@ console.log(endBox);
 console.log(hsBox);
 console.log(resultBox);
 
-document.getElementById("view-scores").addEventListener("click",function(){
-    showHighScores();
-})
+document.getElementById("view-scores").addEventListener("click", function () {
+  showHighScores();
+});
 
 // Event delegation: a way that you can ad an event listener once for multiple elements with support for adding extra children
 // https://www.youtube.com/watch?v=pKzf80F3O0U&ab_channel=dcode
-questions_parent_container.on("click", "label", 
+questions_parent_container.on(
+  "click",
+  "label",
 
-function click_fn(event) {
-
+  function click_fn(event) {
     numQues--;
- 
-    
-    console.log(index)
+
+    console.log(index);
 
     console.log("click");
     var clickedAns = event.target.textContent;
@@ -268,8 +247,6 @@ function click_fn(event) {
       result = "<li>(Prev) " + questionLabel + ": Correct!</li>";
 
       $("#result").html(result);
-
-
     } else {
       console.log("Incorrect!");
       result =
@@ -282,21 +259,18 @@ function click_fn(event) {
       console.log("After: ", secondsLeft);
       // Subtraction assignment (-=)
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Subtraction_assignment
-
     }
 
     // Now that the answer-checking has been done, advance to the next question
     index++;
 
     if (numQues) {
-        showQuestion(index);
-      } else {
-        stopQuiz();
-      }
+      showQuestion(index);
+    } else {
+      stopQuiz();
+    }
   }
-
 );
-
 
 function startQuiz() {
   secondsLeft = 120;
@@ -312,6 +286,7 @@ function startQuiz() {
   quizBox.style.setProperty("display", "block");
   hsBox.style.setProperty("display", "none");
   resultBox.style.setProperty("display", "block");
+  document.getElementById("view-scores").style.setProperty("display", "flex");
 
   timerInterval = setInterval(function () {
     secondsLeft--;
@@ -319,7 +294,7 @@ function startQuiz() {
 
     if (secondsLeft <= 0) {
       // Stops execution of action at set interval
-    //<= rather than == is important because negative timer is possible when user gets penalised -10s below a remaining time of 10s
+      //<= rather than == is important because negative timer is possible when user gets penalised -10s below a remaining time of 10s
       clearInterval(timerInterval);
       // Calls function to create and append image
       stopQuiz();
@@ -329,29 +304,14 @@ function startQuiz() {
   showQuestion(index);
 }
 
-
-
-// document
-//   .getElementById("player-initials-submit")
-//   .addEventListener("click", function (event) {
-//     event.preventDefault();
-//     var playerInitials = document.getElementById("player-initials").value; // .trim() doesn't work here?
-//     console.log(secondsLeft);
-//     console.log(playerInitials);
-//   });
-
 function showQuestion(index) {
-  
   console.log("No of ques left ", numQues);
 
   console.log("Index: ", index);
   questionNumber = index + 1;
 
- 
-
   questionLabel = "Q" + questionNumber;
-  console.log(questionLabel)
-
+  console.log(questionLabel);
 
   var q_slot = document.getElementById("mc-question");
 
@@ -369,10 +329,6 @@ function showQuestion(index) {
     // for each answer
     a_slots[i].textContent = mc_question_array[index]["options"][i];
   }
-
-
-
-
 }
 
 function stopQuiz() {
@@ -381,47 +337,40 @@ function stopQuiz() {
   endBox.style.setProperty("display", "block");
 }
 
-
-
 function showHighScores() {
-    // For View high scores transition
-    clearInterval(timerInterval);
-    secondsLeft = 0;
-    timer.textContent = "Time remaining: " + secondsLeft;
-    startBox.style.setProperty("display", "none");
-    quizBox.style.setProperty("display", "none");
-    document.getElementById("view-scores").style.setProperty("display", "none");
+  // For View high scores transition
+  clearInterval(timerInterval);
+  secondsLeft = 0;
+  timer.textContent = "Time remaining: " + secondsLeft;
+  startBox.style.setProperty("display", "none");
+  quizBox.style.setProperty("display", "none");
+  document.getElementById("view-scores").style.setProperty("display", "none");
 
-    // for stopQuiz transition
+  // for stopQuiz transition
   endBox.style.setProperty("display", "none");
   hsBox.style.setProperty("display", "block");
   resultBox.style.setProperty("display", "none");
 
-
-
-  var table = document.getElementsByTagName("table")[0]
+  var table = document.getElementsByTagName("table")[0];
   console.log(table);
 
+  retrievedScores =
+    JSON.parse(localStorage.getItem("player_scoreboard_info")) || [];
+  console.log("retrievedScores" + retrievedScores);
+  //   console.log(JSON.stringify(retrievedScores, null, 4));
 
-  retrievedScores = JSON.parse(localStorage.getItem("player_scoreboard_info")) || [];
-  console.log("retrievedScores" + retrievedScores)
-//   console.log(JSON.stringify(retrievedScores, null, 4));
+  // Insert headers
+  // Table insertRow() Method
+  // https://www.w3schools.com/jsref/met_table_insertrow.asp
+  var row = table.insertRow(0);
 
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
 
-// Insert headers
-// Table insertRow() Method
-// https://www.w3schools.com/jsref/met_table_insertrow.asp
-var row = table.insertRow(0);
+  cell1.innerHTML = "Player";
+  cell2.innerHTML = "Score";
 
-var cell1 = row.insertCell(0)
-var cell2 = row.insertCell(1)
-
-cell1.innerHTML = 'Player';
-cell2.innerHTML = 'Score';
-
-
-retrievedScores.forEach(function (arrayItem) {
-
+  retrievedScores.forEach(function (arrayItem) {
     // Table insertRow() Method
     // https://www.w3schools.com/jsref/met_table_insertrow.asp
     var row = table.insertRow(1);
@@ -430,16 +379,13 @@ retrievedScores.forEach(function (arrayItem) {
     cell1.innerHTML = arrayItem.playerName;
     cell2.innerHTML = arrayItem.playerScore;
     // https://stackoverflow.com/a/63931711/9095603
-   
-});
+  });
 
-sortTable(table);
+  sortTable(table);
 
   // Clear out the last multiple choice result
   $("#result").html("");
 }
-
-
 
 // Stop a setInterval() from within another function
 // Store a reference to the interval and clear it using clearInterval()
