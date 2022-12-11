@@ -1,6 +1,41 @@
-function question_advancer(index){
+// FUNCTIONS FOR LATER USE
+// sorting function to sort high scores table by ascending order of score in the second col
+// Adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table_number
+function sortTable(table) {
+    var rows, switching, i, x, y, shouldSwitch;
 
-}
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[1];
+        y = rows[i + 1].getElementsByTagName("TD")[1];
+        //check if the two rows should switch place:
+        if (Number(x.innerHTML) > Number(y.innerHTML)) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
 
 // A string of objects is the best approach
 mc_question_array = [
@@ -112,18 +147,6 @@ submitBtn.on("click", function (event) {
   // TypeError: $(...).addEventListener is not a function
   // https://stackoverflow.com/a/34767762/9095603
 
-  // // Get any prev stored highscores
-  // var storedHighScores = JSON.parse(localStorage.getItem("player_scoreboard_info")); // WILL THIS THROW ERROR IF key does not exist in localStorage??
-
-  // // If todos were retrieved from localStorage, update the todos array to it
-  // if (storedHighScores !== null) {
-  //     player_scoreboard_info = storedHighScores;
-  //     console.log('Retrieved: ' + player_scoreboard_info)
-  // }
-
-
-  
-
 
   // INPUTS
   var playerInput = $("#player-initials").val(); // Does this require var?
@@ -169,8 +192,30 @@ startBtn.addEventListener("click", startQuiz);
 
 
 
-playAgainBtn.addEventListener("click", () => {
+playAgainBtn.addEventListener("click", function(event){
+    event.preventDefault(); // for debugging and troubleshooting, this is helpful as it doesn't cause the page and console to reload and you can retain your console data up to this point, even though reloading the page at this point happens to coincide with what you want
+
+   // Clear high scores table for next run it doesn't duplicate rows over the last run (it will be rebuilt from scratch again)
+    //    var existingTable = document.getElementsByTagName("table")[0];
+    //    existingTable.append("table")
+
+    //     document.getElementsByTagName("table")[0].remove();
+    // https://www.geeksforgeeks.org/how-to-remove-all-rows-from-a-table-in-javascript/#:~:text=This%20can%20be%20done%20by%20using%20JavaScript.&text=First%20of%20all%20set%20the,delete%20the%20all%20table%20rows.
+    // this approach may not work because the whole ??? table element gets removed, and you want to keep the table element whilst removing the rows
+    
+    // console.log(document.getElementsByTagName("table"));
+    document.getElementsByTagName("table")[0].innerHTML = "";
+    // https://stackoverflow.com/a/41413953/9095603
+
+    // table = document.getElementsByTagName("table");
+    // while(table.rows.length > 0) {
+    //     table.deleteRow(0);
+    //   }
+    // https://stackoverflow.com/a/16258678/9095603
+
+
   startQuiz();
+
 });
 
 // playAgainBtn.addEventListener("click", () => {
@@ -264,7 +309,7 @@ function click_fn(event) {
 
 
 function startQuiz() {
-  secondsLeft = 10000;
+  secondsLeft = 75;
   // var secondsLeft = 10000;
   // wrong, is creating a new variable named secondsLeft which is only accessible inside this StartQuiz function
   // the showQuestion function was pulling the global variable named SecondsLeft which = 0
@@ -352,36 +397,45 @@ function showHighScores() {
   hsBox.style.setProperty("display", "block");
   resultBox.style.setProperty("display", "none");
 
-  const hsTable = document.getElementsByTagName("table")[0]
-  console.log(hsTable);
-//   hsTable.appendChild('row')
+//   const hsTable = document.getElementsByTagName("tbody")[0]
+//   const hsTable = document.querySelector("table");
+//   console.log(hsTable);
 
-//   console.log('table element: ' + hsBox.closest('table'))
-  
+  var table = document.getElementsByTagName("table")[0]
+  console.log(table);
+
 
   retrievedScores = JSON.parse(localStorage.getItem("player_scoreboard_info")) || [];
   console.log("retrievedScores" + retrievedScores)
-  console.log(JSON.stringify(retrievedScores, null, 4));
+//   console.log(JSON.stringify(retrievedScores, null, 4));
 
-    tableContents = '';
-  for (var key in retrievedScores){
-    if (retrievedScores.hasOwnProperty(key)){
-    tableContents += '<row><td>' + key + '</td><td>' + retrievedScores[key] + '</td></row>';
-    }
-  }
-  console.log(tableContents);
-  hsTable.innerHTML = tableContents;
 
-  // localStorage.setItem("studentGrade", JSON.stringify(studentGrade));
+// Insert headers
+// Table insertRow() Method
+// https://www.w3schools.com/jsref/met_table_insertrow.asp
+var row = table.insertRow(0);
 
-  // var playerInfo = {
-  //     student: student.value,
-  //     grade: grade.value,
-  //     comment: comment.value.trim()
-  //   };
+var cell1 = row.insertCell(0)
+var cell2 = row.insertCell(1)
 
-  // var scores = JSON.parse(localStorage.getItem("player_scoreboard_info"));
-  // console.log(scores);
+cell1.innerHTML = 'Player';
+cell2.innerHTML = 'Score';
+
+
+retrievedScores.forEach(function (arrayItem) {
+
+    // Table insertRow() Method
+    // https://www.w3schools.com/jsref/met_table_insertrow.asp
+    var row = table.insertRow(1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = arrayItem.playerName;
+    cell2.innerHTML = arrayItem.playerScore;
+    // https://stackoverflow.com/a/63931711/9095603
+   
+});
+
+sortTable(table);
 
   // Clear out the last multiple choice result
   $("#result").html("");
